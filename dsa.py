@@ -62,9 +62,9 @@ class CirculerLinkedList:
 
 class Tree:
     """
-    Depth and Height of Tree: Depth is number of edges from the root to the node.
-    degree of a node: is the total number of branches of that node.
-    height of a node: is the number of edges from the node to the deepest leaf
+    Depth and Height of Tree: Depth is number of edges from the root to the node. --> 
+    degree of a node: is the total number of branches of that node. --> this calculated from the same node
+    height of a node: is the number of edges from the node to the deepest leaf --> this calculated from depest node
     """
     def __init__(self, data, children=[]):
         """Constructor to creat tree"""
@@ -91,3 +91,4 @@ class BinaryTree:
         Complete Binary Tree: A Complete Binary tree is a binary tree in which every level, except possibly the last, is completely filled. All the nodes in a complete binary tree are as far left as possible.
         
     """
+    pass
