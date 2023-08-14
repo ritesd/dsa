@@ -113,3 +113,38 @@ class Solution:
             if diff in prevMap:
                 return [prevMap[diff], i]
             prevMap[n] = i
+
+
+"""
+Given an array of strings strs, group the anagrams together. You can return the answer in any order.
+
+An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.
+
+Type: Medium 
+
+Example 1:
+
+Input: strs = ["eat","tea","tan","ate","nat","bat"]
+Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
+Example 2:
+
+Input: strs = [""]
+Output: [[""]]
+Example 3:
+
+Input: strs = ["a"]
+Output: [["a"]]
+"""
+
+from collections import defaultdict
+
+class Solution:
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        ans = defaultdict(list)
+
+        for st in strs:
+            count = [0] * 26
+            for c in st:
+                count[ord(c) - ord('a')] += 1
+            ans[tuple(count)].append(st)
+        return ans.values()
