@@ -83,7 +83,7 @@ class Tree:
         """
         self.children.append(tree_node)
 
-class BinaryTree:
+class BinaryTreeNode:
     """
     Binary Tree: Binary Trees are hierarchical data structures in which each node has at most two children, often referred to as the left and right child
         Full Binary Tree: A Full Binary Tree is a binary tree in which every node has 0 or 2 children
@@ -91,4 +91,84 @@ class BinaryTree:
         Complete Binary Tree: A Complete Binary tree is a binary tree in which every level, except possibly the last, is completely filled. All the nodes in a complete binary tree are as far left as possible.
         
     """
-    pass
+    def __init__(self, data) -> None:
+        self.data = data
+        self.leftchild = None
+        self.rightchild = None
+
+
+class Btree:
+
+    # def __init__(self, root: BinaryTreeNode) -> None:
+    #     self.root = root
+
+    def pre_order_traversal(cls, root: BinaryTreeNode):
+
+        if not root:
+            return
+        print(root.data)
+
+        cls.pre_order_traversal(root=root.leftchild)
+        cls.pre_order_traversal(root=root.rightchild)
+
+    def in_order_traversal(cls, root: BinaryTreeNode):
+        if not root:
+            return
+        cls.in_order_traversal(root=root.leftchild)
+        print(root.data)
+        cls.in_order_traversal(root=root.rightchild)
+
+    def post_order_traversal(cls, root: BinaryTreeNode):
+        if not root:
+            return
+        cls.post_order_traversal(root=root.leftchild)
+        cls.post_order_traversal(root=root.rightchild)
+        print(root.data)
+
+    def level_order_traversal(cls, root: BinaryTreeNode):
+        # since we dont have queue data structur ready so we will use list as queue
+        queue = []
+        queue.append(root)
+
+        while len(queue):
+            # enqueue child of 1st element
+            queue.append(queue[0].leftchild) if queue[0].leftchild else None
+            queue.append(queue[0].rightchild) if queue[0].rightchild else None
+            print(queue.pop(0).data)
+    
+    def search_element(cls, root, find_data):
+        """
+        we will implement queue as it is faster than stack,
+        Now to use queue we will use level order T
+        """
+        if not root:
+            return "empty root"
+        queue = []
+        queue.append(root)
+
+        while len(queue):
+            # enqueue child of 1st element
+            node = queue.pop(0)
+            if node.data == find_data:
+                return "Found"
+            queue.append(node.leftchild) if node.leftchild else None
+            queue.append(node.rightchild) if node.rightchild else None
+        return "Not found"
+    
+    def insert_node_btree(cls, root: BinaryTreeNode, data):
+        if root is None:
+            root = BinaryTreeNode(data=data)
+            return "Inserted successfuly"
+        queue = [root]
+        while queue:
+            node = queue.pop(0)
+            if node.leftchild:
+                queue.append(node.leftchild)
+            else:
+                node.leftchild = BinaryTreeNode(data=data)
+                return "Inserted successfuly"
+            if node.rightchild:
+                queue.append(node.rightchild)
+            else:
+                node.rightchild = BinaryTreeNode(data=data)
+                return "Inserted Successfuly"
