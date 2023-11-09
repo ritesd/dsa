@@ -77,6 +77,7 @@ class Tree:
             ret += child.__str__(level + 1)
         return ret
 
+
     def add_child(self, tree_node):
         """
         method to add tree into as children
@@ -127,14 +128,17 @@ class Btree:
 
     def level_order_traversal(cls, root: BinaryTreeNode):
         # since we dont have queue data structur ready so we will use list as queue
-        queue = []
-        queue.append(root)
+        queue = [root]
+        # queue.append(root)
 
-        while len(queue):
+        while queue:
             # enqueue child of 1st element
-            queue.append(queue[0].leftchild) if queue[0].leftchild else None
-            queue.append(queue[0].rightchild) if queue[0].rightchild else None
-            print(queue.pop(0).data)
+            node = queue.pop(0)
+            print(node.data)
+            if node.leftchild:
+                queue.append(node.leftchild)
+            if node.rightchild:
+                queue.append(node.rightchild)
     
     def search_element(cls, root, find_data):
         """
@@ -172,3 +176,189 @@ class Btree:
             else:
                 node.rightchild = BinaryTreeNode(data=data)
                 return "Inserted Successfuly"
+    
+    def delete_node_btree(cls, root: BinaryTreeNode, data: int):
+        if root is None:
+            return "Tree is empty"
+        
+        node_to_be_delete = None
+        queue = [root]
+
+        while queue:
+            node = queue.pop(0)
+            if not node_to_be_delete and node.data == data:
+                node_to_be_delete = node
+                """did not break the loop in order to find the depest node"""
+            if node.leftchild:
+                queue.append(node.leftchild)
+            if node.rightchild:
+                queue.append(node.rightchild)
+        
+        if node_to_be_delete:
+            node_to_be_delete.data = node.data
+            cls.delete_deepest_node(root, node)
+            return "Node found and deleted"
+        return "Node not found"
+
+    def delete_deepest_node(cls, root: BinaryTreeNode, dnode):
+        queue = [root]
+        while queue:
+            node = queue.pop(0)
+            if node == dnode:
+                node = None
+            else:
+                if node.leftchild:
+                    if node.leftchild == dnode:
+                        node.leftchild = None
+                        return
+                    queue.append(node.leftchild)
+                if node.rightchild:
+                    if node.rightchild == dnode:
+                        node.rightchild = None
+                        return
+                    queue.append(node.rightchild)
+    
+class BtreeArray:
+    def __init__(self, n) -> None:
+        self.array = [None] * n
+        self.last_updated = 0
+    
+    def insert_value(self, value):
+        if len(self.array) == self.last_updated - 1:
+            return "Array is full"
+        self.array[self.last_updated + 1] = value
+        self.last_updated += 1
+        return "Inserted"
+    
+    def inorder_traversal(self, index):
+        if index > self.last_updated:
+            return
+        
+        self.inorder_traversal(index=index*2)
+        print(self.array[index])
+        self.inorder_traversal(index=index*2 + 1)
+
+    def delete_node(self, value):
+        for index, v in enumerate(self.array):
+            if v==value:
+                self.array[index] = self.array[self.last_updated]
+                self.last_updated -= 1
+                return "Node has been deleted"
+        return "Node not found"
+
+"""
+Binany search Tree
+: - I am implementing using dataclasses for node to do more awesome stuff
+"""
+
+from dataclasses import dataclass
+import dataclasses
+from typing import TypeVar
+
+TNode = TypeVar('TNode')
+
+@dataclass(order=True)
+class TNode:
+    data: int
+    left_child: TNode = None
+    right_child: TNode = None
+
+    def to_dict(self):
+        return dataclasses.asdict(self)
+
+class BinarySearchTree:
+
+    def bst_search(cls, root: TNode, value)-> TNode:
+        if not root:
+            return None
+
+        if root.data == value:
+            return root
+        if value < root.data:
+            return cls.bst_search(root=root.left_child, value=value)
+        else:
+            print(root.right_child)
+            return cls.bst_search(root=root.right_child, value=value)
+        
+    def bst_insert(cls, current_node: TNode, value):
+        if current_node is None:
+            current_node = TNode(value)
+
+        elif value <= current_node.data:
+            current_node.left_child = cls.bst_insert(current_node.left_child, value)
+        else:
+            current_node.right_child = cls.bst_insert(current_node.right_child, value)
+        return current_node
+    
+    def bst_inorder_traversal(cls, root:TNode):
+        if root is None:
+            return None
+        cls.bst_inorder_traversal(root.left_child)
+        print(root.data)
+        cls.bst_inorder_traversal(root.right_child)
+
+    def bst_search_parent_node(cls, root: TNode, node:TNode)-> TNode:
+        if not root:
+            return None
+
+        if root.left_child == node or root.right_child == node:
+            return root
+        if node.data < root.data:
+            return cls.bst_search_parent_node(root=root.left_child, node=node)
+        else:
+            return cls.bst_search_parent_node(root=root.right_child, node=node)
+
+    def bst_delete_node(cls, root:TNode, delete_value):
+        """
+        1st: node tobe deleted is leaf node
+            - then we simply set it None
+        2nd: node to be deleted is having one child
+            - then we simply link the parent node with child node of node to be deleted
+        3rd: node to be deleted is having two child
+            - then we look for lowest value successor in right subtree
+            - and replace it with node to be deleted and set succesor node to None
+        """
+
+        if root is None:
+            return "Tree is empty"
+        delete_node = cls.bst_search(root, delete_value)
+        parent_node = cls.bst_search_parent_node(root, delete_node)
+
+        if delete_node.left_child and delete_node.right_child:
+            """
+            write a logic when both node are present
+            """
+            successor = cls._get_successor(delete_node.right_child)
+            if successor.right_child:
+                successor_parent = cls.bst_search_parent_node(root, successor)
+                successor_parent.left_child = successor.right_child
+                successor.right_child = None
+            successor.left_child = delete_node.left_child
+            successor.right_child = delete_node.right_child
+            if parent_node.left_child == delete_node:
+                parent_node.left_child = successor
+            else:
+                parent_node.right_child = successor
+
+        elif delete_node.left_child or delete_node.right_child:
+            """
+            write a logic when only one node present
+            """
+            if parent_node.left_child == delete_node:
+                parent_node.left_child = delete_node.left_child or delete_node.right_child
+            else:
+                parent_node.right_child = delete_node.left_child or delete_node.right_child
+        else:
+            """
+            write logic when it is leaf node
+            """
+            if parent_node.left_child == delete_node:
+                parent_node.left_child = None
+            else:
+                parent_node.right_child = None
+
+    def _get_successor(cls, root: TNode)-> TNode:
+        if root.left_child is None:
+            return root
+        else:
+            return cls._get_successor(root.left_child)
