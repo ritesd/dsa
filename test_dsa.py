@@ -15,7 +15,6 @@ def test_linked_list():
     """testing linked list"""
     cl = CirculerLinkedList()
     for value in range(1, 10):
-        # print(value)
         cl.add(value=value)
 
     for obj in cl:
@@ -151,34 +150,14 @@ def test_bst():
     root.left_child = left
     root.right_child = right
     print(f"****{root}")
-    # left.left_child = TNode(30)
-    # left.right_child = TNode(60)
-    # right.left_child = TNode(80)
-    # right.right_child = TNode(100)
-    # left.left_child.left_child = TNode(20)
     binary_search_tree = BinarySearchTree()
-    # print(binary_search_tree.bst_search(root, 80))
     binary_search_tree.bst_insert(root, 30)
     binary_search_tree.bst_insert(root, 60)
     binary_search_tree.bst_insert(root, 80)
     binary_search_tree.bst_insert(root, 100)
     binary_search_tree.bst_inorder_traversal(root)
-
-    # print(root)
-
-
-# def arry_to_btree():
-#     arr = [0, 20, 100, 3, 50, 15, 250, 35, 222]
-#     def _create_btree(node, arr, loc):
-#         if loc*2 < len(arr):
-#             node.leftchild = BinaryTreeNode(arr[loc*2])
-#             node.leftchild =_create_btree(node.leftchild, arr, loc*2)
-#         if loc*2+1 < len(arr):
-#             node.rightchild = BinaryTreeNode(arr[loc*2+1])
-#             _create_btree(node.leftchild, arr, loc*2+1)
-#         return node
-#     node = BinaryTreeNode(arr[1])
-#     node = _create_btree(node, arr, 1)
+    binary_search_tree.bst_delete_node(root, 80)
+    binary_search_tree.bst_inorder_traversal(root)
 
 
 if __name__ == "__main__":

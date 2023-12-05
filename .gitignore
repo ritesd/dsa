@@ -1,2 +1,3 @@
+.pyc
 *.pyc
-*/*.pyc
+__pycache__/dsa.cpython-311.pyc

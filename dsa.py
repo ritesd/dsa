@@ -321,44 +321,66 @@ class BinarySearchTree:
 
         if root is None:
             return "Tree is empty"
-        delete_node = cls.bst_search(root, delete_value)
-        parent_node = cls.bst_search_parent_node(root, delete_node)
-
-        if delete_node.left_child and delete_node.right_child:
-            """
-            write a logic when both node are present
-            """
-            successor = cls._get_successor(delete_node.right_child)
-            if successor.right_child:
-                successor_parent = cls.bst_search_parent_node(root, successor)
-                successor_parent.left_child = successor.right_child
-                successor.right_child = None
-            successor.left_child = delete_node.left_child
-            successor.right_child = delete_node.right_child
-            if parent_node.left_child == delete_node:
-                parent_node.left_child = successor
-            else:
-                parent_node.right_child = successor
-
-        elif delete_node.left_child or delete_node.right_child:
-            """
-            write a logic when only one node present
-            """
-            if parent_node.left_child == delete_node:
-                parent_node.left_child = delete_node.left_child or delete_node.right_child
-            else:
-                parent_node.right_child = delete_node.left_child or delete_node.right_child
+        if delete_value < root.data:
+            root.left_child = cls.bst_delete_node(root.left_child, delete_value)
+        elif delete_value > root.data:
+            root.right_child = cls.bst_delete_node(root.right_child, delete_value)
         else:
-            """
-            write logic when it is leaf node
-            """
-            if parent_node.left_child == delete_node:
-                parent_node.left_child = None
-            else:
-                parent_node.right_child = None
+            if root.left_child is None:
+                temp = root.right_child
+                root = None
+                return temp
+            elif root.right_child is None:
+                temp = root.left_child
+                root = None
+                return temp
+            temp = cls._get_successor(root.right_child)
+            root.data = temp.data
+            root.right_child = cls.bst_delete_node(root.right_child, temp.data)
+        return root
 
     def _get_successor(cls, root: TNode)-> TNode:
         if root.left_child is None:
             return root
         else:
             return cls._get_successor(root.left_child)
+
+
+class AVLTree(BinarySearchTree):
+    """
+    AVL Tree is a self-balancing Binary Search Tree
+    """
+    # def __init__(self, data):
+    #     super().__init__(data)
+
+    def insert(cls, root, data):
+        root = cls.bst_insert_node(root, data)
+
+    def delete(cls, root, delete_value):
+        root = cls.bst_delete_node(root, delete_value)
+
+    def calculate_height(cls, root):
+        """
+        Calculate height of the tree
+        """
+        if root is None:
+            return 0
+        else:
+            return max(cls.calculate_height(root.left_child), cls.calculate_height(root.right_child)) + 1
+    
+    def right_rotate(cls, root):
+        """
+        Right rotation
+        """
+        new_root = root.left_child
+        root.left_child = new_root.right_child
+        new_root.right_child = root
+        return new_root
+
+    def left_rotate(cls, root):
+        """
+        Left rotation
+        """
+        new_root = root.right_child
+        root.right_child = new_root.left_child
+        new_root.left_child = root
