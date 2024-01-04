@@ -899,3 +899,481 @@ class MinStack:
     def getMin(self) -> int:
         if self._min_stack:
             return self._min_stack[-1]
+
+"""
+150. Evaluate Reverse Polish Notation
+Solved
+Medium
+Topics
+Companies
+You are given an array of strings tokens that represents an arithmetic expression in a Reverse Polish Notation.
+
+Evaluate the expression. Return an integer that represents the value of the expression.
+
+Note that:
+
+The valid operators are '+', '-', '*', and '/'.
+Each operand may be an integer or another expression.
+The division between two integers always truncates toward zero.
+There will not be any division by zero.
+The input represents a valid arithmetic expression in a reverse polish notation.
+The answer and all the intermediate calculations can be represented in a 32-bit integer.
+ 
+
+Example 1:
+
+Input: tokens = ["2","1","+","3","*"]
+Output: 9
+Explanation: ((2 + 1) * 3) = 9
+Example 2:
+
+Input: tokens = ["4","13","5","/","+"]
+Output: 6
+Explanation: (4 + (13 / 5)) = 6
+Example 3:
+
+Input: tokens = ["10","6","9","3","+","-11","*","/","*","17","+","5","+"]
+Output: 22
+Explanation: ((10 * (6 / ((9 + 3) * -11))) + 17) + 5
+= ((10 * (6 / (12 * -11))) + 17) + 5
+= ((10 * (6 / -132)) + 17) + 5
+= ((10 * 0) + 17) + 5
+= (0 + 17) + 5
+= 17 + 5
+= 22
+ 
+
+Constraints:
+
+1 <= tokens.length <= 104
+tokens[i] is either an operator: "+", "-", "*", or "/", or an integer in the range [-200, 200]."""
+
+class Solution:
+    def evalRPN(self, tokens: List[str]) -> int:
+        stack = []
+        
+        for st in tokens:
+            if st == '+':
+                stack.append(int(stack.pop()) + int(stack.pop()))
+            elif st == '-':
+                b, a = int(stack.pop()), int(stack.pop())
+                stack.append(a - b)
+            elif st == '*':
+                stack.append(int(stack.pop()) * int(stack.pop()))
+            elif st == '/':
+                b, a = int(stack.pop()), int(stack.pop())
+                stack.append(int(a / b))
+            else:
+                stack.append(st)
+        return int(stack[0])
+    
+
+"""
+1431. Kids With the Greatest Number of Candies
+Solved
+Easy
+Topics
+Companies
+Hint
+There are n kids with candies. You are given an integer array candies, where each candies[i] represents the number of candies the ith kid has, and an integer extraCandies, denoting the number of extra candies that you have.
+
+Return a boolean array result of length n, where result[i] is true if, after giving the ith kid all the extraCandies, they will have the greatest number of candies among all the kids, or false otherwise.
+
+Note that multiple kids can have the greatest number of candies.
+
+ 
+
+Example 1:
+
+Input: candies = [2,3,5,1,3], extraCandies = 3
+Output: [true,true,true,false,true] 
+Explanation: If you give all extraCandies to:
+- Kid 1, they will have 2 + 3 = 5 candies, which is the greatest among the kids.
+- Kid 2, they will have 3 + 3 = 6 candies, which is the greatest among the kids.
+- Kid 3, they will have 5 + 3 = 8 candies, which is the greatest among the kids.
+- Kid 4, they will have 1 + 3 = 4 candies, which is not the greatest among the kids.
+- Kid 5, they will have 3 + 3 = 6 candies, which is the greatest among the kids.
+Example 2:
+
+Input: candies = [4,2,1,1,2], extraCandies = 1
+Output: [true,false,false,false,false] 
+Explanation: There is only 1 extra candy.
+Kid 1 will always have the greatest number of candies, even if a different kid is given the extra candy.
+Example 3:
+
+Input: candies = [12,1,12], extraCandies = 10
+Output: [true,false,true]
+ 
+
+Constraints:
+
+n == candies.length
+2 <= n <= 100
+1 <= candies[i] <= 100
+1 <= extraCandies <= 50
+"""
+
+class Solution:
+    def kidsWithCandies(self, candies: List[int], extraCandies: int) -> List[bool]:
+        max_candies = max(candies)
+        return [(i+extraCandies) >= max_candies for i in candies]
+
+"""
+605. Can Place Flowers
+Solved
+Easy
+Topics
+Companies
+You have a long flowerbed in which some of the plots are planted, and some are not. However, flowers cannot be planted in adjacent plots.
+
+Given an integer array flowerbed containing 0's and 1's, where 0 means empty and 1 means not empty, and an integer n, return true if n new flowers can be planted in the flowerbed without violating the no-adjacent-flowers rule and false otherwise.
+
+ 
+
+Example 1:
+
+Input: flowerbed = [1,0,0,0,1], n = 1
+Output: true
+Example 2:
+
+Input: flowerbed = [1,0,0,0,1], n = 2
+Output: false
+ 
+
+Constraints:
+
+1 <= flowerbed.length <= 2 * 104
+flowerbed[i] is 0 or 1.
+There are no two adjacent flowers in flowerbed.
+0 <= n <= flowerbed.length
+"""
+
+class Solution:
+    def canPlaceFlowers(self, flowerbed: List[int], n: int) -> bool:
+        for i in range(0,len(flowerbed)):
+            if not n:
+                return True
+            back, front = False, False
+            if i > 0 and flowerbed[i-1] == 1:
+                back = True
+            if (i + 1) < len(flowerbed) and flowerbed[i+1] == 1:
+                front = True
+            if (not back) and (not front) and (not flowerbed[i]):
+                flowerbed[i] = 1
+                n -= 1
+
+        if n:
+            return False
+        else:
+            return True
+
+"""
+22. Generate Parentheses
+Medium
+Topics
+Companies
+Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+ 
+
+Example 1:
+
+Input: n = 3
+Output: ["((()))","(()())","(())()","()(())","()()()"]
+Example 2:
+
+Input: n = 1
+Output: ["()"]
+ 
+
+Constraints:
+
+1 <= n <= 8
+"""
+
+class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+        stack = []
+        result = []
+
+        def backtracking(open_p, close_p):
+
+            if open_p == n and close_p==n:
+                result.append("".join(stack))
+                return result
+            
+            if open_p < n:
+                stack.append('(')
+                backtracking(open_p + 1, close_p)
+                stack.pop()
+            
+            if close_p <  open_p:
+                stack.append(')')
+                backtracking(open_p, close_p + 1)
+                stack.pop()
+        
+        backtracking(0, 0)
+        return result
+
+"""
+Another solution 
+"""
+class Solution:
+    def generate_parenthesis(n:int) -> str:
+        result = []
+        left=right=0
+        q = [(left, right, '')]
+        while q:
+            left, right, s = q.pop(0)
+            if left==n and right==n:
+                result.append(s)
+            
+            if left<n:
+                q.append((left+1, right, s+'('))
+            if right<left:
+                q.append((left, right+1, s+')'))
+        return result
+
+
+"""
+Daily Temperatures
+Solved
+Medium
+Topics
+Companies
+Hint
+Given an array of integers temperatures represents the daily temperatures, return an array answer such that answer[i] is the number of days you have to wait after the ith day to get a warmer temperature. If there is no future day for which this is possible, keep answer[i] == 0 instead.
+
+ 
+
+Example 1:
+
+Input: temperatures = [73,74,75,71,69,72,76,73]
+Output: [1,1,4,2,1,1,0,0]
+Example 2:
+
+Input: temperatures = [30,40,50,60]
+Output: [1,1,1,0]
+Example 3:
+
+Input: temperatures = [30,60,90]
+Output: [1,1,0]
+ 
+
+Constraints:
+
+1 <= temperatures.length <= 105
+30 <= temperatures[i] <= 100
+"""
+
+class Solution:
+    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
+        stack = [] #[index, value]
+        result = [0] * len(temperatures)
+        for i, t in enumerate(temperatures):
+            while stack and stack[-1][1] < t:
+                index, value = stack.pop()
+                result[index] = i - index
+            stack.append([i, t])
+        return result
+
+"""
+Car Fleet
+Solved
+Medium
+Topics
+Companies
+There are n cars going to the same destination along a one-lane road. The destination is target miles away.
+
+You are given two integer array position and speed, both of length n, where position[i] is the position of the ith car and speed[i] is the speed of the ith car (in miles per hour).
+
+A car can never pass another car ahead of it, but it can catch up to it and drive bumper to bumper at the same speed. The faster car will slow down to match the slower car's speed. The distance between these two cars is ignored (i.e., they are assumed to have the same position).
+
+A car fleet is some non-empty set of cars driving at the same position and same speed. Note that a single car is also a car fleet.
+
+If a car catches up to a car fleet right at the destination point, it will still be considered as one car fleet.
+
+Return the number of car fleets that will arrive at the destination.
+
+ 
+
+Example 1:
+
+Input: target = 12, position = [10,8,0,5,3], speed = [2,4,1,1,3]
+Output: 3
+Explanation:
+The cars starting at 10 (speed 2) and 8 (speed 4) become a fleet, meeting each other at 12.
+The car starting at 0 does not catch up to any other car, so it is a fleet by itself.
+The cars starting at 5 (speed 1) and 3 (speed 3) become a fleet, meeting each other at 6. The fleet moves at speed 1 until it reaches target.
+Note that no other cars meet these fleets before the destination, so the answer is 3.
+Example 2:
+
+Input: target = 10, position = [3], speed = [3]
+Output: 1
+Explanation: There is only one car, hence there is only one fleet.
+Example 3:
+
+Input: target = 100, position = [0,2,4], speed = [4,2,1]
+Output: 1
+Explanation:
+The cars starting at 0 (speed 4) and 2 (speed 2) become a fleet, meeting each other at 4. The fleet moves at speed 2.
+Then, the fleet (speed 2) and the car starting at 4 (speed 1) become one fleet, meeting each other at 6. The fleet moves at speed 1 until it reaches target.
+ 
+
+Constraints:
+
+n == position.length == speed.length
+1 <= n <= 105
+0 < target <= 106
+0 <= position[i] < target
+All the values of position are unique.
+0 < speed[i] <= 106
+"""
+class Solution:
+    def carFleet(self, target: int, position: List[int], speed: List[int]) -> int:
+        stack = []
+        for p, s in sorted(zip(position, speed), key=lambda x: x[0], reverse=True):
+            time = (target - p)/s
+            if stack and stack[-1] >= time:
+                continue
+            else:
+                stack.append(time)
+        return len(stack)
+    
+"""
+Largest Rectangle in Histogram
+Solved
+Hard
+Topics
+Companies
+Given an array of integers heights representing the histogram's bar height where the width of each bar is 1, return the area of the largest rectangle in the histogram.
+
+ 
+
+Example 1:
+
+
+Input: heights = [2,1,5,6,2,3]
+Output: 10
+Explanation: The above is a histogram where width of each bar is 1.
+The largest rectangle is shown in the red area, which has an area = 10 units.
+Example 2:
+
+
+Input: heights = [2,4]
+Output: 4
+ 
+
+Constraints:
+
+1 <= heights.length <= 105
+0 <= heights[i] <= 104
+"""
+
+class Solution:
+    def largestRectangleArea(self, heights: List[int]) -> int:
+        stack = [] # [index, hight]
+        max_area = 0
+
+        for index, value in enumerate(heights):
+            if stack and stack[-1][1] > value:
+                while stack and stack[-1][1] > value:
+                    i, v = stack.pop()
+                    max_area = max(max_area, (index - i) * v)
+                stack.append([i, value])
+            else:
+                stack.append([index, value])
+        for i, v in stack:
+            max_area = max(max_area, (len(heights) - i) * v)
+        return max_area
+    
+"""
+Search a 2D Matrix
+Solved
+Medium
+Topics
+Companies
+You are given an m x n integer matrix matrix with the following two properties:
+
+Each row is sorted in non-decreasing order.
+The first integer of each row is greater than the last integer of the previous row.
+Given an integer target, return true if target is in matrix or false otherwise.
+
+You must write a solution in O(log(m * n)) time complexity.
+
+ 
+
+Example 1:
+
+
+Input: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+Output: true
+Example 2:
+
+
+Input: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 13
+Output: false
+ 
+
+Constraints:
+
+m == matrix.length
+n == matrix[i].length
+1 <= m, n <= 100
+-104 <= matrix[i][j], target <= 104
+"""
+
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        if not matrix or not matrix[0]:
+            return False
+
+        rows, cols = len(matrix), len(matrix[0])
+        left, right = 0, rows * cols - 1
+
+        while left <= right:
+            mid = left + (right - left) // 2
+            mid_value = matrix[mid // cols][mid % cols]
+
+            if mid_value == target:
+                return True
+            elif mid_value < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+
+        return False
+    
+"""another solution"""
+
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        if not matrix or not matrix[0]:
+            return False
+
+        rows, cols = len(matrix), len(matrix[0])
+        top , bot = 0, rows - 1
+
+        while top <= bot:
+            row = (top + bot)//2
+            if target < matrix[row][0]:
+                bot = row - 1
+            elif target > matrix[row][-1]:
+                top = row + 1
+            else:
+                break
+        
+        if not top <= bot:
+            return False
+        row = (top + bot)//2
+
+        l, r = 0, cols - 1
+        while l <= r:
+            m = (l + r)//2
+            if target < matrix[row][m]:
+                r = m - 1
+            elif target > matrix[row][m]:
+                l = m + 1
+            else:
+                return True
+        return False
