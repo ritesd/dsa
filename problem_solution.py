@@ -1437,3 +1437,425 @@ class Solution:
             else:
                 l = k + 1
         return res
+    
+"""
+Given an array of integers and a target sum, find all unique combinations of elements in the array that add up to the target sum. 
+The elements can be used repeatedly, but the combinations should be unique. Input nums = [2, 3, 5, 7] target = 7 Output:[[2, 2, 3], [5, 2], [7]]
+"""
+
+def find_combination(nums: list, target: int):
+    stack = []
+    result = []
+
+    def backtracking(ntarget, start_index):
+        if ntarget == 0:
+            print(f"***{stack}, ntarget: {ntarget}")
+            result.append(stack[:])
+            return result
+
+        for i in range(start_index, len(nums)):
+            if nums[i] <= ntarget and (ntarget - nums[i]) in nums or (ntarget - nums[i])==0:
+                stack.append(nums[i])
+                backtracking(ntarget - nums[i], i)
+                stack.pop()
+    backtracking(target, 0)
+    return result
+
+
+if __name__=='__main__':
+    print(find_combination([2, 3, 5, 7], 7))
+
+
+"""
+153. Find Minimum in Rotated Sorted Array
+Solved
+Medium
+Topics
+Companies
+Hint
+Suppose an array of length n sorted in ascending order is rotated between 1 and n times. For example, the array nums = [0,1,2,4,5,6,7] might become:
+
+[4,5,6,7,0,1,2] if it was rotated 4 times.
+[0,1,2,4,5,6,7] if it was rotated 7 times.
+Notice that rotating an array [a[0], a[1], a[2], ..., a[n-1]] 1 time results in the array [a[n-1], a[0], a[1], a[2], ..., a[n-2]].
+
+Given the sorted rotated array nums of unique elements, return the minimum element of this array.
+
+You must write an algorithm that runs in O(log n) time.
+
+ 
+
+Example 1:
+
+Input: nums = [3,4,5,1,2]
+Output: 1
+Explanation: The original array was [1,2,3,4,5] rotated 3 times.
+Example 2:
+
+Input: nums = [4,5,6,7,0,1,2]
+Output: 0
+Explanation: The original array was [0,1,2,4,5,6,7] and it was rotated 4 times.
+Example 3:
+
+Input: nums = [11,13,15,17]
+Output: 11
+Explanation: The original array was [11,13,15,17] and it was rotated 4 times. 
+ 
+
+Constraints:
+
+n == nums.length
+1 <= n <= 5000
+-5000 <= nums[i] <= 5000
+All the integers of nums are unique.
+nums is sorted and rotated between 1 and n times.
+"""
+
+class Solution:
+    def findMin(self, nums: List[int]) -> int:
+        left, right = 0, len(nums) - 1
+        ans = nums[0]
+        while left <= right:
+            if nums[left] < nums[right]:
+                ans = min(nums[left], ans)
+                break
+            mid = (left + right)//2
+            ans = min(nums[mid], ans)
+            if nums[left] <= nums[mid]:
+                left = mid + 1
+            else:
+                right = mid - 1
+        return ans
+
+class Solution:
+    def findMin(self, nums: List[int]) -> int:
+     lo=0
+     hi=len(nums)-1
+     while lo<=hi:
+        mid=(lo+hi)//2
+        if nums[mid]<nums[mid-1]:
+            return nums[mid]
+        if nums[mid]>nums[hi]:
+            lo=mid+1
+        else:
+            hi=mid-1
+     return nums[mid]
+    
+
+"""
+Search in Rotated Sorted Array
+Solved
+Medium
+Topics
+Companies
+There is an integer array nums sorted in ascending order (with distinct values).
+
+Prior to being passed to your function, nums is possibly rotated at an unknown pivot index k (1 <= k < nums.length) such that the resulting array is [nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]] (0-indexed). For example, [0,1,2,4,5,6,7] might be rotated at pivot index 3 and become [4,5,6,7,0,1,2].
+
+Given the array nums after the possible rotation and an integer target, return the index of target if it is in nums, or -1 if it is not in nums.
+
+You must write an algorithm with O(log n) runtime complexity.
+
+ 
+
+Example 1:
+
+Input: nums = [4,5,6,7,0,1,2], target = 0
+Output: 4
+Example 2:
+
+Input: nums = [4,5,6,7,0,1,2], target = 3
+Output: -1
+Example 3:
+
+Input: nums = [1], target = 0
+Output: -1
+ 
+
+Constraints:
+
+1 <= nums.length <= 5000
+-104 <= nums[i] <= 104
+All values of nums are unique.
+nums is an ascending array that is possibly rotated.
+-104 <= target <= 104
+"""
+
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        lo, hi = 0, len(nums) - 1
+        while lo <= hi:
+            mid = (lo + hi)//2
+            if nums[mid] == target:
+                return mid
+            if nums[lo] <= nums[mid]:
+                if nums[lo] <= target and target < nums[mid]:
+                    hi = mid - 1
+                else:
+                    lo = mid + 1
+            else:
+                if nums[mid] < target and target <= nums[hi]:
+                    lo = mid + 1
+                else:
+                    hi = mid - 1
+        return -1
+    
+"""
+Time Based Key-Value Store
+Solved
+Medium
+Topics
+Companies
+Design a time-based key-value data structure that can store multiple values for the same key at different time stamps and retrieve the key's value at a certain timestamp.
+
+Implement the TimeMap class:
+
+TimeMap() Initializes the object of the data structure.
+void set(String key, String value, int timestamp) Stores the key key with the value value at the given time timestamp.
+String get(String key, int timestamp) Returns a value such that set was called previously, with timestamp_prev <= timestamp. If there are multiple such values, it returns the value associated with the largest timestamp_prev. If there are no values, it returns "".
+ 
+
+Example 1:
+
+Input
+["TimeMap", "set", "get", "get", "set", "get", "get"]
+[[], ["foo", "bar", 1], ["foo", 1], ["foo", 3], ["foo", "bar2", 4], ["foo", 4], ["foo", 5]]
+Output
+[null, null, "bar", "bar", null, "bar2", "bar2"]
+
+Explanation
+TimeMap timeMap = new TimeMap();
+timeMap.set("foo", "bar", 1);  // store the key "foo" and value "bar" along with timestamp = 1.
+timeMap.get("foo", 1);         // return "bar"
+timeMap.get("foo", 3);         // return "bar", since there is no value corresponding to foo at timestamp 3 and timestamp 2, then the only value is at timestamp 1 is "bar".
+timeMap.set("foo", "bar2", 4); // store the key "foo" and value "bar2" along with timestamp = 4.
+timeMap.get("foo", 4);         // return "bar2"
+timeMap.get("foo", 5);         // return "bar2"
+ 
+
+Constraints:
+
+1 <= key.length, value.length <= 100
+key and value consist of lowercase English letters and digits.
+1 <= timestamp <= 107
+All the timestamps timestamp of set are strictly increasing.
+At most 2 * 105 calls will be made to set and get.
+"""
+
+class TimeMap:
+
+    def __init__(self):
+        self.hash_map = {}
+
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        if self.hash_map.get(key):
+            self.hash_map[key].append((value, timestamp))
+        else:
+            self.hash_map[key] = [(value, timestamp)]
+
+    def get(self, key: str, timestamp: int) -> str:
+        res = ""
+        if not self.hash_map.get(key):
+            return res
+        array = self.hash_map.get(key)
+        l, r = 0, len(array) - 1
+        while l <= r:
+            mid = (l + r) // 2
+            if timestamp >= array[mid][1]:
+                res = array[mid][0]
+                l = mid + 1
+            else:
+                r = mid - 1
+        return res
+    
+"""
+another approche
+"""
+from bisect import bisect_left, bisect_right
+from collections import defaultdict
+class TimeMap:
+    def __init__(self):
+        self.dic = defaultdict(list)
+        
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        pos = bisect_left(self.dic[key],(timestamp,value))
+        self.dic[key].insert(pos,(timestamp,value))
+        
+
+    def get(self, key: str, timestamp: int) -> str:
+        pos = bisect_right(self.dic[key],timestamp,key = lambda x: x[0])
+        return self.dic[key][pos-1][1] if pos else ""
+
+"""
+Median of Two Sorted Arrays
+Solved
+Hard
+Topics
+Companies
+Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.
+
+The overall run time complexity should be O(log (m+n)).
+
+ 
+
+Example 1:
+
+Input: nums1 = [1,3], nums2 = [2]
+Output: 2.00000
+Explanation: merged array = [1,2,3] and median is 2.
+Example 2:
+
+Input: nums1 = [1,2], nums2 = [3,4]
+Output: 2.50000
+Explanation: merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.
+ 
+
+Constraints:
+
+nums1.length == m
+nums2.length == n
+0 <= m <= 1000
+0 <= n <= 1000
+1 <= m + n <= 2000
+-106 <= nums1[i], nums2[i] <= 106
+"""
+
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        def merge_array(nums1, nums2):
+            arr = []
+            l = r = 0
+            while l < len(nums1) and r < len(nums2):
+                if nums1[l] < nums2[r]:
+                    arr.append(nums1[l])
+                    l += 1
+                else:
+                    arr.append(nums2[r])
+                    r += 1
+            if l < len(nums1):
+                arr.extend(nums1[l:])
+            elif r < len(nums2):
+                arr.extend(nums2[r:])
+            return arr
+        if (len(nums1) + len(nums2)) % 2 == 0:
+            array = merge_array(nums1, nums2)
+            mid = len(array)//2
+            return (array[mid -1 ] + array[mid])/2
+        else:
+            array = merge_array(nums1, nums2)
+            mid = len(array)//2
+            return array[mid]
+
+"""
+Best Time to Buy and Sell Stock
+Attempted
+Easy
+Topics
+Companies
+You are given an array prices where prices[i] is the price of a given stock on the ith day.
+
+You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.
+
+Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.
+
+ 
+
+Example 1:
+
+Input: prices = [7,1,5,3,6,4]
+Output: 5
+Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
+Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.
+Example 2:
+
+Input: prices = [7,6,4,3,1]
+Output: 0
+Explanation: In this case, no transactions are done and the max profit = 0.
+ 
+
+Constraints:
+
+1 <= prices.length <= 105
+0 <= prices[i] <= 104
+"""
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        if len(prices) < 2:
+            return 0
+        l, r = 0, 1
+        max_profit = 0
+        while l < r and r < len(prices):
+            if prices[l] < prices[r]:
+                max_profit = max(max_profit, prices[r] - prices[l])
+                r += 1
+            else:
+                l += 1
+                r += 1
+        return max_profit
+
+"""
+3. Longest Substring Without Repeating Characters
+Solved
+Medium
+Topics
+Companies
+Hint
+Given a string s, find the length of the longest 
+substring
+ without repeating characters.
+
+ 
+
+Example 1:
+
+Input: s = "abcabcbb"
+Output: 3
+Explanation: The answer is "abc", with the length of 3.
+Example 2:
+
+Input: s = "bbbbb"
+Output: 1
+Explanation: The answer is "b", with the length of 1.
+Example 3:
+
+Input: s = "pwwkew"
+Output: 3
+Explanation: The answer is "wke", with the length of 3.
+Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
+ 
+
+Constraints:
+
+0 <= s.length <= 5 * 104
+s consists of English letters, digits, symbols and spaces.
+"""
+
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        longest = 0
+        l, r = 0, 0
+        while l <= r and r < len(s):
+            if s[r] not in s[l:r]:
+                r += 1
+                longest = max(longest, (r - l))
+            else:
+                l += 1
+        return longest
+
+"""
+another approche
+"""
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        charSet = set()
+        l = 0
+        res = 0
+
+        for r in range(len(s)):
+            while s[r] in charSet:
+                charSet.remove(s[l])
+                l += 1
+            charSet.add(s[r])
+            res = max(res, r - l + 1)
+        return res

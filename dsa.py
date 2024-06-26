@@ -265,6 +265,16 @@ class TNode:
 
     def to_dict(self):
         return dataclasses.asdict(self)
+    
+@dataclass(order=True)
+class AVLTNode:
+    data: int
+    left_child: TNode = None
+    right_child: TNode = None
+    height: int = None
+
+    def to_dict(self):
+        return dataclasses.asdict(self)
 
 class BinarySearchTree:
 
@@ -340,7 +350,8 @@ class BinarySearchTree:
         return root
 
     def _get_successor(cls, root: TNode)-> TNode:
-        if root.left_child is None:
+        """also called as getMinvalueNode"""
+        if root is None or root.left_child is None:
             return root
         else:
             return cls._get_successor(root.left_child)
@@ -353,13 +364,13 @@ class AVLTree(BinarySearchTree):
     # def __init__(self, data):
     #     super().__init__(data)
 
-    def insert(cls, root, data):
+    def insert(cls, root: AVLTNode, data):
         root = cls.bst_insert_node(root, data)
 
     def delete(cls, root, delete_value):
         root = cls.bst_delete_node(root, delete_value)
 
-    def calculate_height(cls, root):
+    def calculate_height(cls, root: AVLTNode):
         """
         Calculate height of the tree
         """
@@ -368,19 +379,27 @@ class AVLTree(BinarySearchTree):
         else:
             return max(cls.calculate_height(root.left_child), cls.calculate_height(root.right_child)) + 1
     
-    def right_rotate(cls, root):
+    def right_rotate(cls, root: AVLTNode):
         """
         Right rotation
+        time complexity - O(1)
+        space complexity - O(1)
         """
         new_root = root.left_child
-        root.left_child = new_root.right_child
+        root.left_child = root.left_child.right_child
         new_root.right_child = root
+        root.height = cls.calculate_height(root=root)
+        new_root.height = cls.calculate_height(root=new_root)
         return new_root
 
-    def left_rotate(cls, root):
+    def left_rotate(cls, root: AVLTNode):
         """
         Left rotation
         """
         new_root = root.right_child
-        root.right_child = new_root.left_child
+        root.right_child = new_root.right_child.left_child
         new_root.left_child = root
+        root.height = cls.calculate_height(root=root)
+        new_root.height = cls.calculate_height(root=new_root)
+        return new_root
+        
