@@ -1859,3 +1859,21 @@ class Solution:
             charSet.add(s[r])
             res = max(res, r - l + 1)
         return res
+
+"""
+anther approche
+"""
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        _str = []
+        longest = 0
+        a = b = 0
+        while b < len(s):
+            if s[b] not in _str:
+                _str += s[b]
+                longest = max(len(_str), longest)
+                b += 1
+            else:
+                _str.pop(0)
+                a += 1
+        return longest
