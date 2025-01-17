@@ -253,7 +253,7 @@ Binany search Tree
 
 from dataclasses import dataclass
 import dataclasses
-from typing import TypeVar
+from typing import Literal, TypeVar
 
 TNode = TypeVar('TNode')
 
@@ -403,3 +403,100 @@ class AVLTree(BinarySearchTree):
         new_root.height = cls.calculate_height(root=new_root)
         return new_root
         
+class BHeap:
+    MAX = "max"
+    MIN = "min"
+    def __init__(self, size, type=Literal[MAX, MIN]):
+        if type in [self.MAX, self.MIN]:
+            self._type = type
+        self._customeList = [None] * (size + 1)
+        self._heap_size = 0
+        self.maxSize = size + 1
+
+
+    def peak(self):
+        if self._heap_size:
+            return self._customeList[1]
+    
+    def __sizeof__(self):
+        return self._heap_size
+    
+    def level_order_traversal(self):
+        if not self._heap_size:
+            return
+        for i in range(1, self._heap_size + 1):
+            print(self._customeList[i])
+    
+    def insert(self, value):
+        if self._heap_size + 1 == self.maxSize:
+            return "Binary Heap is Fully Occupied"
+        self._heap_size += 1
+        self._customeList[self._heap_size] = value
+        self.__heapify_bottom_to_top_insert(self._heap_size)
+    
+    def __heapify_bottom_to_top(self, index: int):
+        parent_index = int(index/2)
+        if parent_index <= 1:
+            return
+        if self._type == self.MIN:
+            if self._customeList[index] < self._customeList[parent_index]:
+                temp = self._customeList[parent_index]
+                self._customeList[parent_index] = self._customeList[index]
+                self._customeList[index] = temp
+            self.__heapify_bottom_to_top(parent_index)
+
+        if self._type == self.MAX:
+            if self._customeList[index] > self._customeList[parent_index]:
+                temp = self._customeList[parent_index]
+                self._customeList[parent_index] = self._customeList[index]
+                self._customeList[index] = temp
+            self.__heapify_bottom_to_top(parent_index)
+    
+    def __heapify_top_to_bottom(self, index: int):
+        _left_child = index * 2
+        _right_child = index * 2 + 1
+        _swap_child = 0
+        if self._heap_size < _left_child:
+            return
+        if self._heap_size == _left_child:
+            if self._type == self.MIN:
+                if self._customeList[index] > self._customeList[_left_child]:
+                    temp = self._customeList[index]
+                    self._customeList[index] = self._customeList[_left_child]
+                    self._customeList[_left_child] = temp
+                return
+            else:
+                if self._customeList[index] < self._customeList[_left_child]:
+                    temp = self._customeList[index]
+                    self._customeList[index] = self._customeList[_left_child]
+                    self._customeList[_left_child] = temp
+                return
+        else:
+            if self._type == self.MIN:
+                if self._customeList[_left_child] < self._customeList[_right_child]:
+                    _swap_child = _left_child
+                else:
+                    _swap_child = _right_child
+                if self._customeList[index] > self._customeList[_swap_child]:
+                    temp = self._customeList[index]
+                    self._customeList[index] = self._customeList[_swap_child]
+                    self._customeList[_swap_child] = temp
+            else:
+                if self._customeList[_left_child] > self._customeList[_right_child]:
+                    _swap_child = _left_child
+                else:
+                    _swap_child = _right_child
+                if self._customeList[index] < self._customeList[_swap_child]:
+                    temp = self._customeList[index]
+                    self._customeList[index] = self._customeList[_swap_child]
+                    self._customeList[_swap_child] = temp
+        self.__heapify_top_to_bottom(_swap_child)
+    
+    def extract(self):
+        if self._heap_size == 0:
+            return "Binary Heap is Empty"
+        extracted = self._customeList[1]
+        self._customeList[1] = self._customeList[self._heap_size]
+        self._customeList[self._heap_size] = None
+        self.__heapify_top_to_bottom(1)
+        return extracted

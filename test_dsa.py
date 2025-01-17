@@ -1,6 +1,7 @@
 """This file for testing dsa"""
 import time
 from dsa import (
+    BHeap,
     CirculerLinkedList,
     Tree,
     BinaryTreeNode,
@@ -159,6 +160,11 @@ def test_bst():
     binary_search_tree.bst_delete_node(root, 80)
     binary_search_tree.bst_inorder_traversal(root)
 
+def test_bheap():
+    newheap = BHeap(10, 'min')
+    newheap.insert()
+    a = [6,7,8]
+    a.insert(9)
 
 if __name__ == "__main__":
     # test_linked_list()

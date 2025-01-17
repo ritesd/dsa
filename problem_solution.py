@@ -1877,3 +1877,90 @@ class Solution:
                 _str.pop(0)
                 a += 1
         return longest
+    
+"""
+## Longest Repeating Substring With Replacement
+
+You are given a string s consisting of only uppercase english characters and an integer k. You can choose up to k characters of 
+the string and replace them with any other uppercase English character. 
+After performing at most k replacements, return the length of the longest substring which contains only one distinct character.
+
+Example 1:
+
+Input: s = "XYYX", k = 2
+
+Output: 4
+Explanation: Either replace the 'X's with 'Y's, or replace the 'Y's with 'X's.
+
+Example 2:
+
+Input: s = "AAABABB", k = 1
+
+Output: 5
+"""
+class Solution:
+    def characterReplacement(self, s: str, k: int) -> int:
+        from collections import defaultdict
+        hash_map = defaultdict(int)
+        l = 0
+        max_length = 0
+        max_f = 0
+        for r in range(len(s)):
+            hash_map[s[r]] += 1
+            max_f = max(max_f, max(hash_map.values()))
+            while l <= r and (r - l + 1) - max_f > k:
+                hash_map[s[l]] -= 1
+                l += 1
+            max_length = max(max_length, r - l + 1)
+        return max_length
+    
+"""
+Permutation String
+Solved 
+You are given two strings s1 and s2.
+
+Return true if s2 contains a permutation of s1, or false otherwise. That means if a permutation of s1 exists as a substring of s2, then return true.
+
+Both strings only contain lowercase letters.
+
+Example 1:
+
+Input: s1 = "abc", s2 = "lecabee"
+
+Output: true
+Explanation: The substring "cab" is a permutation of "abc" and is present in "lecabee".
+
+Example 2:
+
+Input: s1 = "abc", s2 = "lecaabee"
+
+Output: false
+Constraints:
+
+"""
+
+from collections import Counter, defaultdict
+class Solution:
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        if len(s1) > len(s2):
+            return False
+        s1_dict = Counter(s1)
+        length = len(s2)
+        l = 0
+        while l < length:
+            if s2[l] not in s1:
+                l += 1
+                continue
+            s2_dict = defaultdict(int)
+            r = l
+            while r < length and s2[r] in s1:
+                s2_dict[s2[r]] += 1
+                if ((r - l) + 1) > len(s1):
+                    s2_dict[s2[l]] -= 1
+                    l += 1
+                r += 1
+                if s1_dict == s2_dict:
+                    return True
+            l = r
+        
+        return False
