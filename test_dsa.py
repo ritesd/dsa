@@ -9,6 +9,7 @@ from dsa import (
     BtreeArray,
     BinarySearchTree,
     TNode,
+    Trie,
 )
 
 
@@ -166,10 +167,20 @@ def test_bheap():
     a = [6,7,8]
     a.insert(9)
 
+def test_trie():
+    newTrie = Trie()
+    import ipdb; ipdb.set_trace()
+    newTrie.insert("ritesh")
+    newTrie.insert("jitesh")
+    newTrie.insert("rakesh")
+    newTrie.insert("jitu")
+    print(newTrie.search("ritesh"))
+
 if __name__ == "__main__":
     # test_linked_list()
     # tree()
     # test_btree_to_array()
     # order_traversal()
     # test_array_btree()
-    test_bst()
+    # test_bst()
+    test_trie()

@@ -500,3 +500,125 @@ class BHeap:
         self._customeList[self._heap_size] = None
         self.__heapify_top_to_bottom(1)
         return extracted
+
+
+class TrieNode:
+
+    def __init__(self):
+        self.hashmap = {}
+        self.is_endof_word = False
+    
+    # @property
+    # def hashmap(self, key):
+    #     return self.__hashmap.get(key)
+    
+    # @hashmap.setter
+    # def hashmap(self, key, value):
+    #     self.__hashmap[key] = value
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    
+    def insert(self, word: str):
+        current = self.root
+        # iterate through word
+        for ch in word:
+            node = current.hashmap.get(ch)
+            if node == None:
+                node = TrieNode()
+                current.hashmap.update({ch: node})
+            current = node
+        current.is_endof_word = True
+
+    def search(self, word: str) -> bool:
+        current = self.root
+        for ch in word:
+            node = current.hashmap.get(ch)
+            if node == None:
+                print("word not found")
+                return False
+            current = node
+        if current.is_endof_word == True:
+            print("Word found")
+        else:
+            print("Word not found")
+        return current.is_endof_word
+
+    def deleteString(self, word, index, root: TrieNode = None):
+        # Case 1: string is already prefix of other word
+        # Case 2: this word is prefix of other word
+        # Case 3: Some other word is prefix of this word
+        # Case 4: No is dependent of this word
+
+        ch = word[index]
+        root = self.root if not root else root
+        current_node: TrieNode = root.hashmap.get("ch")
+        canNodeBeDeleted = False
+
+        # Case 1: string is already prefix of other word
+        if len(current_node.hashmap) > 1:
+            self.deleteString(word=word, index=index+1, root=current_node)
+            return False
+
+        # Case 2: this word is prefix of other word
+        if index == len(word) - 1:
+            if len(current_node.hashmap) >= 1:
+                current_node.is_endof_word = False
+                return False
+            else:
+                root.hashmap.pop(ch)
+                return True
+
+        # Case 3: Some other word is prefix of this word
+        if current_node.is_endof_word:
+            self.deleteString(word=word, index=index+1, root=current_node)
+            return False
+        
+        canNodeBeDeleted = self.deleteString(word=word, index=index + 1, root=current_node)
+        # Case 4: No is dependent of this word
+        if canNodeBeDeleted:
+            root.hashmap.pop('ch')
+            return True
+        else:
+            return False
+
+class Hashing:
+    def __init__(self, size):
+        self.size = size
+        self.table = [[] for _ in range(size)]
+
+    def _hash_function(self, key):
+        return hash(key) % self.size
+
+    def insert(self, key, value):
+        hash_key = self._hash_function(key)
+        key_exists = False
+        bucket = self.table[hash_key]
+        for i, kv in enumerate(bucket):
+            k, v = kv
+            if key == k:
+                key_exists = True
+                break
+        if key_exists:
+            bucket[i] = (key, value)
+        else:
+            bucket.append((key, value))
+
+    def search(self, key):
+        hash_key = self._hash_function(key)
+        bucket = self.table[hash_key]
+        for k, v in bucket:
+            if k == key:
+                return v
+        return None
+
+    def delete(self, key):
+        hash_key = self._hash_function(key)
+        bucket = self.table[hash_key]
+        for i, kv in enumerate(bucket):
+            k, v = kv
+            if key == k:
+                del bucket[i]
+                return True
+        return False
